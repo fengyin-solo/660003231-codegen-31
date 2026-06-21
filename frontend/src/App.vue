@@ -13,6 +13,7 @@
       </div>
       <div class="lg:w-1/4 space-y-4">
         <AdmetPanel />
+        <ViewHistory @select="onViewHistorySelect" />
       </div>
     </div>
   </div>
@@ -24,7 +25,13 @@ import { useMoleculeStore } from './store/molecule'
 import MoleculeViewer from './components/MoleculeViewer.vue'
 import AdmetPanel from './components/AdmetPanel.vue'
 import MoleculeSearch from './components/MoleculeSearch.vue'
+import ViewHistory from './components/ViewHistory.vue'
 
 const store = useMoleculeStore()
+
+function onViewHistorySelect(moleculeId: number) {
+  store.selectMoleculeById(moleculeId)
+}
+
 onMounted(() => store.loadMolecules())
 </script>

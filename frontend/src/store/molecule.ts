@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { MoleculeData, ADMETProps } from '../types'
+import { useHistoryStore } from './history'
 
 const ATOM_COLORS: Record<string, string> = {
   C: '#6b7280', N: '#3b82f6', O: '#ef4444', S: '#eab308',
@@ -122,6 +123,14 @@ export const useMoleculeStore = defineStore('molecule', () => {
   function selectMolecule(mol: MoleculeData) {
     currentMolecule.value = mol
     admet.value = computeADMET({ mw: mol.mw, logP: mol.logP, formula: mol.formula })
+    const historyStore = useHistoryStore()
+    historyStore.addViewHistory({
+      id: mol.id,
+      name: mol.name,
+      smiles: mol.smiles,
+      formula: mol.formula,
+      category: mol.category
+    })
   }
 
   function searchMolecules(query: string) {
@@ -147,9 +156,14 @@ export const useMoleculeStore = defineStore('molecule', () => {
       .slice(0, 5)
   })
 
+  function selectMoleculeById(id: number) {
+    const mol = molecules.value.find(m => m.id === id)
+    if (mol) selectMolecule(mol)
+  }
+
   return {
     molecules, currentMolecule, admet, searchQuery, searchResults, isLoading,
     filteredMolecules, similarMolecules,
-    loadMolecules, selectMolecule, searchMolecules
+    loadMolecules, selectMolecule, searchMolecules, selectMoleculeById
   }
 })
